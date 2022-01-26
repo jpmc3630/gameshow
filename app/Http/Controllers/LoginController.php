@@ -21,14 +21,14 @@ class LoginController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            // 'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'between:9,255', 'confirmed', PasswordRule::min(9)->numbers()->mixedCase()],
+            'password' => ['required', 'string', 'between:9,255', PasswordRule::min(9)->numbers()],
             'device_name' => ['nullable', 'string', 'max:255'],
         ]);
 
         $user = User::create([
-            'name' => $request->name,
+            'name' => 'No name!',
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
