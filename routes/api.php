@@ -15,6 +15,12 @@ use App\Http\Controllers\LoginController;
 |
 */
 
+Route::middleware('auth:sanctum')->get('/fire', function (Request $request) {
+  event(new \App\Events\TestEvent());
+  return 'ok';
+});
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
