@@ -16,7 +16,12 @@ use App\Http\Controllers\LoginController;
 */
 
 Route::middleware('auth:sanctum')->get('/fire', function (Request $request) {
-  event(new \App\Events\TestEvent());
+  // event(new \App\Events\TestEvent());
+
+  $actionId = 'score_update';
+  $actionData = array('team1_score' => 46);
+  event(new \App\Events\ActionEvent($actionId, $actionData));
+
   return 'ok';
 });
 

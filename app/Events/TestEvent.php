@@ -14,6 +14,7 @@ class TestEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $lol = 'haha';
     /**
      * Create a new event instance.
      *
