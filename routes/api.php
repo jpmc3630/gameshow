@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\TestEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -15,6 +16,14 @@ use App\Http\Controllers\LoginController;
 |
 */
 
+
+Route::get('/socket', function (Request $request) {
+  event(new TestEvent('hello world'));
+  return 'oki';
+});
+
+
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -28,3 +37,8 @@ Route::post('/login', [LoginController::class, 'login'])
 
 Route::post('/register', [LoginController::class, 'register'])
     ->name('register');
+
+Route::post('/thetoken', function (Request $request) {
+    \Log::info($request['the_token']);
+    return 'Hello!';
+});
