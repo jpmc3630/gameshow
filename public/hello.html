@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  <script>
+
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('81019b1380702f6af7e4', {
+      cluster: 'ap4',
+      authEndpoint: "https://c9f9-61-245-129-196.au.ngrok.io/broadcasting/auth",
+      // authEndpoint: "https://gameshow.test/broadcasting/auth"
+      auth: {
+        headers: {
+          Authorization: 'Bearer 1|AfT4WRoTqLfgaDZhX2pxb7wLI748AIHuCPCZuF2K'
+        }
+      }
+    });
+
+    var channel = pusher.subscribe('private-my-channel');
+    channel.bind('my-event', function(data) {
+      alert(JSON.stringify(data));
+    });
+  </script>
+</head>
+<body>
+  <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>my-channel</code>
+    with event name <code>my-event</code>.
+  </p>
+</body>
+
+<!-- 
+import Echo from 'laravel-echo';
+import UAParser from 'ua-parser-js'
+    
+    let parser = new UAParser()
+    this.device = parser.getResult()
+    console.log('Websocket Connecting')
+    this.Echo = new Echo({
+      broadcaster: 'pusher',
+      forceTLS: true,
+      key: '81019b1380702f6af7e4',
+      // auth: {
+      //   headers: {
+      //     Authorization: 'Bearer 1|AfT4WRoTqLfgaDZhX2pxb7wLI748AIHuCPCZuF2K'
+      //   }
+      // }
+      // authEndpoint: 'https://d34f-61-245-129-196.au.ngrok.io/broadcasting/auth'
+
+    })
+    // this.presence()
+    // // this.subscribesPatrols()
+    // this.Echo.private('private-channel')
+    //   .listenForWhisper('my-event', (data) => {
+    //     let payload = {}
+    //     payload.user_id = data.user_id
+    //     payload.route = data.name
+    //     payload.device = data.device
+    //     store.commit('presence/updateUser', payload, { root: true })
+    //   }) -->
