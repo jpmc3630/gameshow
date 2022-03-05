@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 use App\Http\Resources\UserResource;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -64,5 +65,41 @@ class LoginController extends Controller
         }
           
         return $user->createToken($request->device_name)->plainTextToken;
+    }
+
+    /**
+     * Create room and save it on user model.
+     *
+     * @return room
+     */
+    public function newRoom(Request $request)
+    {
+      do {
+        $room['room'] = $this->generateRoomName(4);
+        $validator = Validator::make($room, [
+          'room' => ['string', 'max:4', 'unique:users,room']
+        ]);
+        $result = $validator->fails();
+      } while ($result);
+
+      $user = auth()->user();
+      $user->room = $room['room'];
+      $user->save();
+      return $user->room;
+    }
+
+    /**
+     * Generate a new room name.
+     *
+     * @return room
+     */
+    function generateRoomName($length = 4) {
+      $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      $charactersLength = strlen($characters);
+      $randomString = '';
+      for ($i = 0; $i < $length; $i++) {
+          $randomString .= $characters[rand(0, $charactersLength - 1)];
+      }
+      return $randomString;
     }
 }
