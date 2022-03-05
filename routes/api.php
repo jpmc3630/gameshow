@@ -23,6 +23,7 @@ Route::get('/socket', function (Request $request) {
 });
 
 
+Route::middleware('auth:sanctum')->get('/new-room', [LoginController::class, 'newRoom']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
