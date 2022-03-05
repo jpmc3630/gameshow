@@ -72,7 +72,7 @@ class LoginController extends Controller
      *
      * @return room
      */
-    public function newRoom(Request $request)
+    public function createRoom(Request $request)
     {
       do {
         $room['room'] = $this->generateRoomName(4);
