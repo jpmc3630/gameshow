@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Agent;
 
 use App\Models\User;
+use App\Models\Player;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\PlayerResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rules\Password as PasswordRule;
-use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
@@ -42,6 +44,34 @@ class LoginController extends Controller
                 'user' =>   new UserResource($user)
                 ]);
     }
+
+    /**
+     * Create a new user with player role.
+     *
+     * @return json of player and token
+     */
+    public function player(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'device_name' => ['nullable', 'string', 'max:255'],
+            'room' => ['required', 'string', 'max:255']
+        ]);
+
+        $player = Player::create([
+            'name' => $request->name,
+            'room' => $request->room
+        ]);
+
+        $device_name = $request->device_name;
+
+        return response()
+            ->json([
+                'token' => $player->createToken($device_name)->plainTextToken,
+                'user' =>   new PlayerResource($player)
+                ]);
+    }
+
 
     /**
      * Login a new user.
