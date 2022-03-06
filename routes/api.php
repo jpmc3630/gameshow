@@ -39,6 +39,9 @@ Route::post('/login', [LoginController::class, 'login'])
 Route::post('/register', [LoginController::class, 'register'])
     ->name('register');
 
+Route::post('/player', [LoginController::class, 'player'])
+    ->name('player');
+
 Route::post('/thetoken', function (Request $request) {
     \Log::info($request['the_token']);
     return 'Hello!';
