@@ -10,17 +10,18 @@
 
     var pusher = new Pusher('81019b1380702f6af7e4', {
       cluster: 'ap4',
-      authEndpoint: "https://15e0-61-245-129-196.au.ngrok.io/broadcasting/auth",
+      authEndpoint: "https://97e0-61-245-129-196.au.ngrok.io/broadcasting/auth",
       auth: {
         headers: {
           // Authorization: 'Bearer 1|R8Gize55jT26Uj8hrXP7UuSgrn8IKTTXT2Vk6pYd'
           Authorization: 'Bearer 14|1VbNjt3JryW0VihagvCudzcxbWPDNLRExufzI4K4'
+          // Authorization: 'Bearer 33|TeghI7GVb00jwNVe7CYtLU63nAgJIVZUhLFfoZL8'
         }
       }
     });
 
     
-    var channel = pusher.subscribe('presence-THTS');
+    var channel = pusher.subscribe('presence-AAAA');
 
     channel.bind("pusher:subscription_succeeded", function () {
       console.log("Subscription succeeded")

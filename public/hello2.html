@@ -1,0 +1,100 @@
+
+
+
+    <!DOCTYPE html>
+    <head>
+      <title>Pusher Test</title>
+      <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+      <script>
+    
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
+    
+        var pusher = new Pusher('81019b1380702f6af7e4', {
+      cluster: 'ap4',
+      authEndpoint: "https://97e0-61-245-129-196.au.ngrok.io/broadcasting/auth",
+      auth: {
+        headers: {
+          // Authorization: 'Bearer 1|R8Gize55jT26Uj8hrXP7UuSgrn8IKTTXT2Vk6pYd'
+          Authorization: 'Bearer 34|yQB70K0k4D65CBoGduglGKvBbqrv4fdMKutviVEt'
+          // 
+        }
+      }
+    });
+        
+        var channel = pusher.subscribe('presence-AAAA');
+    
+        channel.bind("pusher:subscription_succeeded", function () {
+          console.log("Subscription succeeded")
+          var me = channel.members.me
+          var userId = me.id
+          var userInfo = me.info
+          console.log('me: ', me)
+          console.log('userId: ', userId)
+          console.log('userInfo: ', userInfo)
+        
+    
+          channel.bind('my-event', function(data) {
+            alert(JSON.stringify(data))
+          });
+          channel.bind('client-my-event', function(data) {
+            alert(JSON.stringify(data))
+          });
+    
+    
+          channel.bind("pusher:member_added", (member) => {
+            // For example
+            console.log('Member joined:')
+            console.log(member.id, member.info)
+          });
+    
+          channel.bind("pusher:member_removed", (member) => {
+            // For example
+            console.log('Member left:')
+            console.log(member.id, member.info)
+          });
+        });
+        
+    
+        // on unload
+        //pusher.unsubscribe(channelName);
+      </script>
+    </head>
+    <body>
+      <h1>Pusher Test</h1>
+      <p>
+        Try publishing an event to channel <code>my-channel</code>
+        with event name <code>my-event</code>.
+      </p>
+      <button onClick="channel.trigger('client-my-event', {'message': 'hello world'})">Click me</button>
+    </body>
+    
+    <!-- 
+    import Echo from 'laravel-echo';
+    import UAParser from 'ua-parser-js'
+        
+        let parser = new UAParser()
+        this.device = parser.getResult()
+        console.log('Websocket Connecting')
+        this.Echo = new Echo({
+          broadcaster: 'pusher',
+          forceTLS: true,
+          key: '81019b1380702f6af7e4',
+          // auth: {
+          //   headers: {
+          //     Authorization: 'Bearer 1|R8Gize55jT26Uj8hrXP7UuSgrn8IKTTXT2Vk6pYd'
+          //   }
+          // }
+          // authEndpoint: 'https://d34f-61-245-129-196.au.ngrok.io/broadcasting/auth'
+    
+        })
+        // this.presence()
+        // // this.subscribesPatrols()
+        // this.Echo.private('private-channel')
+        //   .listenForWhisper('my-event', (data) => {
+        //     let payload = {}
+        //     payload.user_id = data.user_id
+        //     payload.route = data.name
+        //     payload.device = data.device
+        //     store.commit('presence/updateUser', payload, { root: true })
+        //   }) -->
