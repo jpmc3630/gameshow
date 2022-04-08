@@ -4,6 +4,7 @@ use App\Events\TestEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\QuestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,7 @@ Route::get('/socket', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->get('/new-room', [LoginController::class, 'createRoom']);
+Route::middleware('auth:sanctum')->get('/question', [QuestionController::class, 'getQuestion']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
