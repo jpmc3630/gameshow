@@ -9,7 +9,7 @@ class QuestionController extends Controller
 {
     public function getQuestion() 
     {
-        $question = Question::find(1);
+        $question = Question::inRandomOrder()->first();
 
         return response()->json($question);
     }
