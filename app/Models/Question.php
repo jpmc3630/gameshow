@@ -9,7 +9,7 @@ class Question extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-      'incorrect_answers' => 'array'
-    ];
+    // protected $casts = [
+    //   'incorrect_answers' => 'array'
+    // ];
 }
