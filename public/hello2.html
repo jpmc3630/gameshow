@@ -1,100 +1,199 @@
+<!DOCTYPE html>
+<head>
+  <title>Pusher Test</title>
+  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  <script>
 
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
 
-
-    <!DOCTYPE html>
-    <head>
-      <title>Pusher Test</title>
-      <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-      <script>
-    
-        // Enable pusher logging - don't include this in production
-        Pusher.logToConsole = true;
-    
-        var pusher = new Pusher('81019b1380702f6af7e4', {
+    var pusher = new Pusher('81019b1380702f6af7e4', {
       cluster: 'ap4',
-      authEndpoint: "https://97e0-61-245-129-196.au.ngrok.io/broadcasting/auth",
+      authEndpoint: "https://3e1c-61-245-129-196.au.ngrok.io/broadcasting/auth",
       auth: {
         headers: {
           // Authorization: 'Bearer 1|R8Gize55jT26Uj8hrXP7UuSgrn8IKTTXT2Vk6pYd'
           Authorization: 'Bearer 34|yQB70K0k4D65CBoGduglGKvBbqrv4fdMKutviVEt'
-          // 
+          // Authorization: 'Bearer 33|TeghI7GVb00jwNVe7CYtLU63nAgJIVZUhLFfoZL8'
         }
       }
     });
+
+    var channel = pusher.subscribe('presence-AAAA')
+    let yourAnswer = ""
+
+    channel.bind("pusher:subscription_succeeded", function () {
+      console.log("Subscription succeeded")
+      var me = channel.members.me
+      var userId = me.id
+      var userInfo = me.info
+      console.log('me: ', me)
+      console.log('userId: ', userId)
+      console.log('userInfo: ', userInfo)
+    
+
+      channel.bind('my-event', function(data) {
+        alert(yourAnswer)
+      });
+      channel.bind('client-mode', function(data) {
+        // alert(JSON.stringify(data))
         
-        var channel = pusher.subscribe('presence-AAAA');
+        if (data.Mode == "status") {
+          document.getElementById('question-mode').style.display = 'none'
+          document.getElementById('answer-mode').style.display = 'none'
+          document.getElementById('status-mode').style.display = 'block'
+          statusText(data.Message)
+          return
+        }
+        if (data.Mode == "buttons") {
+          document.getElementById('status-mode').style.display = 'none'
+          document.getElementById('answer-mode').style.display = 'none'
+          document.getElementById('question-mode').style.display = 'block'
+          return
+        }
+        if (data.Mode == "answer") {
+          // alert('your answer', yourAnswer)
+          if (yourAnswer == data.Message) {
+            document.getElementById('answer-text').innerHTML = 'Correct!'
+          } else {
+            document.getElementById('answer-text').innerHTML = 'Incorrect!'
+          }
+
+          document.getElementById('question-mode').style.display = 'none'
+          document.getElementById('status-mode').style.display = 'none'
+          document.getElementById('answer-mode').style.display = 'block'
+          return
+        }
+      })
+
+      channel.bind("pusher:member_added", (member) => {
+        // For example
+        console.log('Member joined:')
+        console.log(member.id, member.info)
+      });
+
+      channel.bind("pusher:member_removed", (member) => {
+        // For example
+        console.log('Member left:')
+        console.log(member.id, member.info)
+      });
+    });
     
-        channel.bind("pusher:subscription_succeeded", function () {
-          console.log("Subscription succeeded")
-          var me = channel.members.me
-          var userId = me.id
-          var userInfo = me.info
-          console.log('me: ', me)
-          console.log('userId: ', userId)
-          console.log('userInfo: ', userInfo)
-        
+    function statusText(text) {
+        document.getElementById('question-mode').style.display = 'none'
+        document.getElementById('status-text').innerText = text
+        document.getElementById('status-mode').style.display = 'block'
+    }
+
+    function answer(answer) {
+      yourAnswer = answer
+      channel.trigger('client-answer', {'answer': answer})
+      statusText('You have answered')
+    }
+
+    // on unload
+    //pusher.unsubscribe(channelName);
+
+  </script>
+  <style>
+    html, body {
+        height: 100%;
+        margin: 0px;
+        background-color: #373737;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      height: 100%;
+      width: 100%;
+    }
+
+    .answerButton {
+      width: 20vh;
+      height: 20vh;
+      font-size: 10em;
+      margin: 50px;
+      background-color: #373737;
+      color: #d5d5d5;;
+      border: 1px solid #d5d5d5;
+      border-radius: 10px;
+    }
+
+    #status-text {
+      color: #d5d5d5;
+      font-size: 5em;
+    }
+    #answer-text {
+      color: #d5d5d5;
+      font-size: 5em;
+    }
+
+    #status-mode {
+      display:block;
+    }
+    #question-mode {
+      display:none;
+    }
+    #answer-mode {
+      display:none;
+    }
+  </style>
+</head>
+<body>
+  <!-- <h1>Pusher Test</h1>
+  <p>
+    Try publishing an event to channel <code>my-channel</code>
+    with event name <code>my-event</code>.
+  </p>
+  <button onClick="channel.trigger('client-my-event', {'message': 'hello world'})">Click me</button> -->
+
+<div class="container">
+    <div id="status-mode">
+      <h2 id="status-text">Waiting to start</h2>
+    </div>
+
+    <div id="answer-mode">
+      <h2 id="answer-text"></h2>
+    </div>
+
+    <div id="question-mode">
+      <button id="A" class="answerButton" onClick="answer('A');">A</button> <br><br>
+      <button id="B" class="answerButton" onClick="answer('B');">B</button> <br><br>
+      <button id="C" class="answerButton" onClick="answer('C');">C</button> <br><br>
+    </div>
+</div>
+
+</body>
+
+<!-- 
+import Echo from 'laravel-echo';
+import UAParser from 'ua-parser-js'
     
-          channel.bind('my-event', function(data) {
-            alert(JSON.stringify(data))
-          });
-          channel.bind('client-my-event', function(data) {
-            alert(JSON.stringify(data))
-          });
-    
-    
-          channel.bind("pusher:member_added", (member) => {
-            // For example
-            console.log('Member joined:')
-            console.log(member.id, member.info)
-          });
-    
-          channel.bind("pusher:member_removed", (member) => {
-            // For example
-            console.log('Member left:')
-            console.log(member.id, member.info)
-          });
-        });
-        
-    
-        // on unload
-        //pusher.unsubscribe(channelName);
-      </script>
-    </head>
-    <body>
-      <h1>Pusher Test</h1>
-      <p>
-        Try publishing an event to channel <code>my-channel</code>
-        with event name <code>my-event</code>.
-      </p>
-      <button onClick="channel.trigger('client-my-event', {'message': 'hello world'})">Click me</button>
-    </body>
-    
-    <!-- 
-    import Echo from 'laravel-echo';
-    import UAParser from 'ua-parser-js'
-        
-        let parser = new UAParser()
-        this.device = parser.getResult()
-        console.log('Websocket Connecting')
-        this.Echo = new Echo({
-          broadcaster: 'pusher',
-          forceTLS: true,
-          key: '81019b1380702f6af7e4',
-          // auth: {
-          //   headers: {
-          //     Authorization: 'Bearer 1|R8Gize55jT26Uj8hrXP7UuSgrn8IKTTXT2Vk6pYd'
-          //   }
-          // }
-          // authEndpoint: 'https://d34f-61-245-129-196.au.ngrok.io/broadcasting/auth'
-    
-        })
-        // this.presence()
-        // // this.subscribesPatrols()
-        // this.Echo.private('private-channel')
-        //   .listenForWhisper('my-event', (data) => {
-        //     let payload = {}
-        //     payload.user_id = data.user_id
-        //     payload.route = data.name
-        //     payload.device = data.device
-        //     store.commit('presence/updateUser', payload, { root: true })
-        //   }) -->
+    let parser = new UAParser()
+    this.device = parser.getResult()
+    console.log('Websocket Connecting')
+    this.Echo = new Echo({
+      broadcaster: 'pusher',
+      forceTLS: true,
+      key: '81019b1380702f6af7e4',
+      // auth: {
+      //   headers: {
+      //     Authorization: 'Bearer 1|R8Gize55jT26Uj8hrXP7UuSgrn8IKTTXT2Vk6pYd'
+      //   }
+      // }
+      // authEndpoint: 'https://d34f-61-245-129-196.au.ngrok.io/broadcasting/auth'
+
+    })
+    // this.presence()
+    // // this.subscribesPatrols()
+    // this.Echo.private('private-channel')
+    //   .listenForWhisper('my-event', (data) => {
+    //     let payload = {}
+    //     payload.user_id = data.user_id
+    //     payload.route = data.name
+    //     payload.device = data.device
+    //     store.commit('presence/updateUser', payload, { root: true })
+    //   }) -->

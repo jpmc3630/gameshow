@@ -10,7 +10,7 @@
 
     var pusher = new Pusher('81019b1380702f6af7e4', {
       cluster: 'ap4',
-      authEndpoint: "https://fdac-61-245-129-196.au.ngrok.io/broadcasting/auth",
+      authEndpoint: "https://3e1c-61-245-129-196.au.ngrok.io/broadcasting/auth",
       auth: {
         headers: {
           // Authorization: 'Bearer 1|R8Gize55jT26Uj8hrXP7UuSgrn8IKTTXT2Vk6pYd'
@@ -20,8 +20,8 @@
       }
     });
 
-    
-    var channel = pusher.subscribe('presence-AAAA');
+    var channel = pusher.subscribe('presence-AAAA')
+    let yourAnswer = ""
 
     channel.bind("pusher:subscription_succeeded", function () {
       console.log("Subscription succeeded")
@@ -34,18 +34,35 @@
     
 
       channel.bind('my-event', function(data) {
-        alert(JSON.stringify(data))
+        alert(yourAnswer)
       });
       channel.bind('client-mode', function(data) {
         // alert(JSON.stringify(data))
-        if (data == 0) {
+        
+        if (data.Mode == "status") {
           document.getElementById('question-mode').style.display = 'none'
+          document.getElementById('answer-mode').style.display = 'none'
           document.getElementById('status-mode').style.display = 'block'
+          statusText(data.Message)
           return
         }
-        if (data == 1) {
+        if (data.Mode == "buttons") {
           document.getElementById('status-mode').style.display = 'none'
+          document.getElementById('answer-mode').style.display = 'none'
           document.getElementById('question-mode').style.display = 'block'
+          return
+        }
+        if (data.Mode == "answer") {
+          // alert('your answer', yourAnswer)
+          if (yourAnswer == data.Message) {
+            document.getElementById('answer-text').innerHTML = 'Correct!'
+          } else {
+            document.getElementById('answer-text').innerHTML = 'Incorrect!'
+          }
+
+          document.getElementById('question-mode').style.display = 'none'
+          document.getElementById('status-mode').style.display = 'none'
+          document.getElementById('answer-mode').style.display = 'block'
           return
         }
       })
@@ -70,6 +87,7 @@
     }
 
     function answer(answer) {
+      yourAnswer = answer
       channel.trigger('client-answer', {'answer': answer})
       statusText('You have answered')
     }
@@ -109,11 +127,18 @@
       color: #d5d5d5;
       font-size: 5em;
     }
+    #answer-text {
+      color: #d5d5d5;
+      font-size: 5em;
+    }
 
     #status-mode {
       display:block;
     }
     #question-mode {
+      display:none;
+    }
+    #answer-mode {
       display:none;
     }
   </style>
@@ -129,6 +154,10 @@
 <div class="container">
     <div id="status-mode">
       <h2 id="status-text">Waiting to start</h2>
+    </div>
+
+    <div id="answer-mode">
+      <h2 id="answer-text"></h2>
     </div>
 
     <div id="question-mode">
