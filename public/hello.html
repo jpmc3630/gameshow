@@ -10,7 +10,7 @@
 
     var pusher = new Pusher('81019b1380702f6af7e4', {
       cluster: 'ap4',
-      authEndpoint: "https://3e1c-61-245-129-196.au.ngrok.io/broadcasting/auth",
+      authEndpoint: "https://0c38-61-245-129-196.au.ngrok.io/broadcasting/auth",
       auth: {
         headers: {
           // Authorization: 'Bearer 1|R8Gize55jT26Uj8hrXP7UuSgrn8IKTTXT2Vk6pYd'
@@ -54,12 +54,15 @@
         }
         if (data.Mode == "answer") {
           // alert('your answer', yourAnswer)
-          if (yourAnswer == data.Message) {
+          
+          if (yourAnswer === "") {
+            document.getElementById('answer-text').innerHTML = 'Timed Out!'
+          } else if (yourAnswer == data.Message) {
             document.getElementById('answer-text').innerHTML = 'Correct!'
           } else {
             document.getElementById('answer-text').innerHTML = 'Incorrect!'
           }
-
+          yourAnswer = "";
           document.getElementById('question-mode').style.display = 'none'
           document.getElementById('status-mode').style.display = 'none'
           document.getElementById('answer-mode').style.display = 'block'
